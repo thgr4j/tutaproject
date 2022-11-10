@@ -1,0 +1,25 @@
+body {
+    margin: 0;
+    padding-top: 3vw;
+}
+
+h1 {
+    text-align: center;
+    font: 5em "Noto";
+}
+
+.content {
+    margin: auto;
+    width: 75%;
+}
+
+input {
+    height: 3vw;
+    width: 100%;
+    font: lighter 2em "Noto";
+}
+
+p {
+    font: bolder 2em "Noto";
+    color: red;
+}
