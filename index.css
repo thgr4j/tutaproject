@@ -6,20 +6,36 @@ body {
 h1 {
     text-align: center;
     font: 5em "Noto";
+    margin: 0;
+}
+
+#desc {
+    margin: 0 0 3vw 0;
+    text-align: center;
+    font-family: "Noto", monospace;
 }
 
 .content {
     margin: auto;
     width: 75%;
+    text-align: center;
 }
 
 input {
     height: 3vw;
     width: 100%;
     font: lighter 2em "Noto";
+    margin-bottom: 2vw;
 }
 
-p {
+#ctrlMsg {
     font: bolder 2em "Noto";
+}
+
+.danger {
     color: red;
+}
+
+.success {
+    color: green;
 }

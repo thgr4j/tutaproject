@@ -1,4 +1,4 @@
-# URL checker
+# Domain name checker
 *by thgr4j*
 
 Entwicklungsaufgabe, die für eine Bewerbung als Webentwickler bei Tutanota gestellt wurde.  
