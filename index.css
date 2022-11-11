@@ -30,6 +30,7 @@ input {
 
 #ctrlMsg {
     font: bolder 2em "Noto";
+    white-space: pre;
 }
 
 .danger {
