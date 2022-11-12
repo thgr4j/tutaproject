@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 function pMsg(msg, valid) {
     const p = document.getElementById('ctrlMsg');
     p.textContent = msg;
@@ -19,35 +10,57 @@ function pMsg(msg, valid) {
 function domValid(domain) {
     const domregex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
     const ipregex = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/;
-    if (domregex.test(domain.toLowerCase()) || ipregex.test(domain))
+    if (domain.slice(0, 9) == 'localhost' || domregex.test(domain.toLowerCase()) || ipregex.test(domain))
         return true;
     else
         return false;
 }
+function htmlIndexOf(html) {
+    var res = false;
+    const title = html.substr(html.search('<title>') + 7, 8);
+    if (title == 'Index of')
+        res = true;
+    return res;
+}
 function srvCheck(domain) {
     var msg = 'The domain name is valid.\n';
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://' + domain);
-    xhr.send();
-    xhr.onload = () => {
-        const exists = (xhr.status == 200);
-        msg += xhr.status + ': ' + xhr.responseText;
-        pMsg(msg, exists);
-    };
-}
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-function check() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const input = document.getElementById('urlCheck');
-        var domain = input.value;
-        if (domValid(domain)) {
-            pMsg('The domain name is valid.', true);
-            yield delay(2000);
-            srvCheck(domain);
-        }
-        else
-            pMsg('The domain name is invalid.', false);
+    fetch('http://' + domain, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        credentials: 'omit'
+    })
+        .then((response) => {
+        response.text().then((html) => {
+            let headers = response.headers;
+            const success = (response.status == 200);
+            if (success) {
+                let type = headers.get('Content-Type');
+                msg += 'Type: ' + type;
+                if (type.slice(0, 9) == 'text/html' && htmlIndexOf(html))
+                    msg += '\nThe URL shows to a folder.';
+            }
+            else if (response.status == 404)
+                msg += 'Error: Not found.';
+            else
+                msg += 'Error.';
+            pMsg(msg, success);
+        });
     });
+}
+var timeout = 0;
+function check() {
+    const input = document.getElementById('urlCheck');
+    clearTimeout(timeout);
+    var domain = input.value;
+    if (domValid(domain)) {
+        pMsg('The domain name is valid.', true);
+        timeout = setTimeout(() => {
+            srvCheck(domain);
+        }, 2000);
+    }
+    else
+        pMsg('The domain name is invalid.', false);
 }
