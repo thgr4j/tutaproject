@@ -1,0 +1,7 @@
+{
+    "domain": [
+        {"id": 1, "url": "github.com", "Content-Type": "file"},
+        {"id": 2, "url": "google.com", "Content-Type": "file"},
+        {"id": 3, "url": "localhost", "Content-Type": "directory"}
+    ]
+}
