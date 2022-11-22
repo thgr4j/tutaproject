@@ -15,41 +15,6 @@ function domValid(domain) {
     else
         return false;
 }
-function htmlIndexOf(html) {
-    var res = false;
-    const title = html.substr(html.search('<title>') + 7, 8);
-    if (title == 'Index of')
-        res = true;
-    return res;
-}
-function srvCheck(domain) {
-    var msg = 'The domain name is valid.\n';
-    fetch('http://' + domain, {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'text/plain'
-        },
-        credentials: 'omit'
-    })
-        .then((response) => {
-        response.text().then((html) => {
-            let headers = response.headers;
-            const success = (response.status == 200);
-            if (success) {
-                let type = headers.get('Content-Type');
-                msg += 'Type: ' + type;
-                if (type.slice(0, 9) == 'text/html' && htmlIndexOf(html))
-                    msg += '\nThe URL shows to a folder.';
-            }
-            else if (response.status == 404)
-                msg += 'Error: Not found.';
-            else
-                msg += 'Error.';
-            pMsg(msg, success);
-        });
-    });
-}
 var timeout = 0;
 function check() {
     const input = document.getElementById('urlCheck');
@@ -63,4 +28,25 @@ function check() {
     }
     else
         pMsg('The domain name is invalid.', false);
+}
+const db = [
+    { "id": 1, "url": "github.com", "type": "file" },
+    { "id": 2, "url": "google.de", "type": "file" },
+    { "id": 3, "url": "localhost/img", "type": "directory" },
+    { "id": 4, "url": "images.unsplash.com/photo-1669072084414-f10a0c2108bd", "type": "file" }
+];
+const type = (domain) => {
+    for (const entry of db) {
+        if (entry.url === domain)
+            return entry.type;
+    }
+    return null;
+};
+function srvCheck(domain) {
+    var msg = 'The domain name is valid.\n';
+    if (type(domain) !== null)
+        msg += 'Type: ' + type(domain);
+    else
+        msg += 'Erorr: Not found';
+    pMsg(msg, (type(domain) !== null));
 }
